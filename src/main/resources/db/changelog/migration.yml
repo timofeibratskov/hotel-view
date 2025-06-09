@@ -1,0 +1,28 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: timofei
+      changes:
+        - createTable:
+            tableName: hotels
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: brand
+                  type: VARCHAR(100)
+              - column:
+                  name: phone
+                  type: VARCHAR(50)
