@@ -1,9 +1,17 @@
 package bratskov.dev.hotel_view.controllers;
 
 import lombok.RequiredArgsConstructor;
-import bratskov.dev.hotel_view.entities.HotelEntity;
+import bratskov.dev.hotel_view.dtos.HotelFullDto;
+import bratskov.dev.hotel_view.dtos.HotelShortDto;
 import bratskov.dev.hotel_view.services.HotelService;
-import org.springframework.web.bind.annotation.*;
+import bratskov.dev.hotel_view.dtos.CreateHotelRequest;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +24,7 @@ public class HotelController {
     private final HotelService hotelService;
 
     @GetMapping("/search")
-    public List<HotelEntity> searchHotels(
+    public List<HotelShortDto> searchHotels(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String brand,
             @RequestParam(required = false) String city,
@@ -29,12 +37,12 @@ public class HotelController {
     }
 
     @PostMapping("/hotels")
-    public void getAll(@RequestBody HotelEntity entity) {
-        hotelService.createHotel(entity);
+    public void createHotel(@RequestBody CreateHotelRequest request) {
+        hotelService.createHotel(request);
     }
 
     @GetMapping("/hotels/{id}")
-    public HotelEntity getHotel(@PathVariable UUID id) {
+    public HotelFullDto getHotel(@PathVariable UUID id) {
         return hotelService.getHotelById(id);
     }
 
