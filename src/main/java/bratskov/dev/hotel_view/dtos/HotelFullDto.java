@@ -1,8 +1,8 @@
 package bratskov.dev.hotel_view.dtos;
 
 import bratskov.dev.hotel_view.entities.embeddeds.Address;
-import bratskov.dev.hotel_view.entities.embeddeds.ArrivalTime;
 import bratskov.dev.hotel_view.entities.embeddeds.Contacts;
+import bratskov.dev.hotel_view.entities.embeddeds.ArrivalTime;
 import lombok.Builder;
 
 import java.util.Set;

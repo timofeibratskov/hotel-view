@@ -1,5 +1,8 @@
 package bratskov.dev.hotel_view.controllers;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
@@ -53,13 +56,14 @@ public class HotelController {
     }
 
     @PostMapping("/hotels")
-    public void createHotel(@RequestBody CreateHotelRequest request) {
+    public void createHotel(@RequestBody @Valid CreateHotelRequest request) {
         hotelService.createHotel(request);
     }
 
     @PostMapping("/hotels/{id}/amenities")
-    public void addAmenities(@PathVariable UUID id,
-                             @RequestBody List<String> amenities) {
+    public void addAmenities(@PathVariable @NotNull UUID id,
+                             @RequestBody @Valid @NotNull @NotEmpty(message = "Amenities list must not be empty")
+                             List<@NotBlank String> amenities) {
         hotelService.addAmenities(id, amenities);
     }
 

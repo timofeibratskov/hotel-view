@@ -7,6 +7,7 @@ import lombok.ToString;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
 
 @Embeddable
 @Getter
@@ -16,6 +17,8 @@ import jakarta.persistence.Embeddable;
 @Builder
 @ToString
 public class Contacts {
+    @NotBlank
     private String phone;
+    @NotBlank
     private String email;
 }
