@@ -1,10 +1,10 @@
 package bratskov.dev.hotel_view.controllers;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.http.ResponseEntity;
 import bratskov.dev.hotel_view.dtos.HotelFullDto;
 import bratskov.dev.hotel_view.dtos.HotelShortDto;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -56,15 +57,19 @@ public class HotelController {
     }
 
     @PostMapping("/hotels")
-    public HotelShortDto createHotel(@RequestBody @Valid CreateHotelRequest request) {
-        return hotelService.createHotel(request);
+    public ResponseEntity<HotelShortDto> createHotel(@RequestBody @Valid CreateHotelRequest request) {
+        HotelShortDto dto = hotelService.createHotel(request);
+        return ResponseEntity
+                .created(URI.create("/property-view/hotels/" + dto.id()))
+                .body(dto);
     }
 
     @PostMapping("/hotels/{id}/amenities")
-    public void addAmenities(@PathVariable @NotNull UUID id,
-                             @RequestBody @Valid @NotNull @NotEmpty(message = "Amenities list must not be empty")
-                             List<@NotBlank String> amenities) {
+    public ResponseEntity<Void> addAmenities(@PathVariable @NotNull UUID id,
+                                             @RequestBody @Valid @NotNull @NotEmpty(message = "Amenities list must not be empty")
+                                             List<@NotBlank String> amenities) {
         hotelService.addAmenities(id, amenities);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/histogram/{param}")

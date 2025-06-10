@@ -17,6 +17,7 @@ import bratskov.dev.hotel_view.entities.HotelEntity;
 import bratskov.dev.hotel_view.dtos.CreateHotelRequest;
 import org.springframework.data.jpa.domain.Specification;
 import bratskov.dev.hotel_view.repositories.HotelRepository;
+import org.springframework.transaction.annotation.Transactional;
 import bratskov.dev.hotel_view.exceptions.HotelNotFoundException;
 
 import java.util.Map;
@@ -70,6 +71,7 @@ public class HotelService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public HotelFullDto getHotelById(UUID id) {
         HotelEntity hotelEntity = hotelRepository.findById(id)
                 .orElseThrow(() ->
@@ -77,12 +79,14 @@ public class HotelService {
         return mapper.toFullDto(hotelEntity);
     }
 
+    @Transactional
     public HotelShortDto createHotel(CreateHotelRequest request) {
         HotelEntity hotelEntity = mapper.toEntity(request);
         hotelRepository.save(hotelEntity);
         return mapper.toShortDto(hotelEntity);
     }
 
+    @Transactional(readOnly = true)
     public void addAmenities(UUID id, List<String> amenities) {
         HotelEntity hotelEntity = hotelRepository.findById(id)
                 .orElseThrow(() ->
@@ -91,6 +95,7 @@ public class HotelService {
         hotelRepository.save(hotelEntity);
     }
 
+    @Transactional(readOnly = true)
     public Map<String, Long> getHistogram(HistogramParam param) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
