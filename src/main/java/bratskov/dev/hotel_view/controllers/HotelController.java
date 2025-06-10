@@ -1,11 +1,14 @@
 package bratskov.dev.hotel_view.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.ResponseEntity;
 import bratskov.dev.hotel_view.dtos.HotelFullDto;
 import bratskov.dev.hotel_view.dtos.HotelShortDto;
+import bratskov.dev.hotel_view.enums.HistogramParam;
 import bratskov.dev.hotel_view.services.HotelService;
 import bratskov.dev.hotel_view.dtos.CreateHotelRequest;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,12 +16,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/property-view")
@@ -61,11 +64,8 @@ public class HotelController {
     }
 
     @GetMapping("/histogram/{param}")
-    public Map<String, Long> getHistogram(@PathVariable String param) {
-        if (!"brand".equals(param) && !"city".equals(param) && !"country".equals(param) && !"amenities".equals(param)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Недопустимый параметр для гистограммы. Разрешены: brand, city, country, amenities.");
-        }
-        return hotelService.getHistogram(param);
+    public ResponseEntity<Map<String, Long>> getHistogram(@PathVariable @NotNull String param) {
+        HistogramParam histogramParam = HistogramParam.from(param);
+        return ResponseEntity.ok(hotelService.getHistogram(histogramParam));
     }
 }

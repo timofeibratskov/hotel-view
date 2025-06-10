@@ -1,7 +1,6 @@
 package bratskov.dev.hotel_view.services;
 
 import jakarta.persistence.Tuple;
-import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.Root;
@@ -12,11 +11,13 @@ import bratskov.dev.hotel_view.dtos.HotelFullDto;
 import jakarta.persistence.criteria.CriteriaQuery;
 import bratskov.dev.hotel_view.dtos.HotelShortDto;
 import bratskov.dev.hotel_view.mappers.HotelMapper;
+import bratskov.dev.hotel_view.enums.HistogramParam;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import bratskov.dev.hotel_view.entities.HotelEntity;
 import bratskov.dev.hotel_view.dtos.CreateHotelRequest;
 import org.springframework.data.jpa.domain.Specification;
 import bratskov.dev.hotel_view.repositories.HotelRepository;
+import bratskov.dev.hotel_view.exceptions.HotelNotFoundException;
 
 import java.util.Map;
 import java.util.List;
@@ -70,7 +71,9 @@ public class HotelService {
     }
 
     public HotelFullDto getHotelById(UUID id) {
-        HotelEntity hotelEntity = hotelRepository.findById(id).orElseThrow();
+        HotelEntity hotelEntity = hotelRepository.findById(id)
+                .orElseThrow(() ->
+                        new HotelNotFoundException("Hotel not found with id: " + id));
         return mapper.toFullDto(hotelEntity);
     }
 
@@ -80,30 +83,45 @@ public class HotelService {
     }
 
     public void addAmenities(UUID id, List<String> amenities) {
-        HotelEntity hotelEntity = hotelRepository.findById(id).orElseThrow();
+        HotelEntity hotelEntity = hotelRepository.findById(id)
+                .orElseThrow(() ->
+                        new HotelNotFoundException("Hotel not found with id: " + id));
         hotelEntity.getAmenities().addAll(amenities);
         hotelRepository.save(hotelEntity);
     }
 
-    public Map<String, Long> getHistogram(String param) {
+    public Map<String, Long> getHistogram(HistogramParam param) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
         Root<HotelEntity> hotelEntityRoot = cq.from(HotelEntity.class);
-        Expression<?> groupByField;
+        Expression<String> groupByField;
 
-        if ("amenities".equals(param)) {
-            groupByField = hotelEntityRoot.join("amenities");
-        } else {
-            groupByField = hotelEntityRoot.get(param);
-            cq.where(cb.isNotNull(groupByField));
+        switch (param) {
+            case BRAND:
+                groupByField = hotelEntityRoot.get("brand");
+                cq.where(cb.isNotNull(groupByField));
+                break;
+            case CITY:
+                groupByField = hotelEntityRoot.get("address").get("city");
+                cq.where(cb.isNotNull(groupByField));
+                break;
+            case COUNTRY:
+                groupByField = hotelEntityRoot.get("address").get("country");
+                cq.where(cb.isNotNull(groupByField));
+                break;
+            case AMENITIES:
+                groupByField = hotelEntityRoot.join("amenities");
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported histogram param: " + param);
+
         }
-        cq.multiselect(groupByField, cb.count(hotelEntityRoot));
-        cq.groupBy(groupByField);
 
-        TypedQuery<Tuple> query = entityManager.createQuery(cq);
-        List<Tuple> results = query.getResultList();
+        cq.multiselect(groupByField, cb.count(hotelEntityRoot)).groupBy(groupByField);
 
-        return results.stream()
+        return entityManager.createQuery(cq)
+                .getResultList()
+                .stream()
                 .collect(Collectors.toMap(
                         tuple -> tuple.get(0, String.class),
                         tuple -> tuple.get(1, Long.class)
