@@ -23,6 +23,11 @@ public class HotelController {
 
     private final HotelService hotelService;
 
+    @GetMapping("/hotels")
+    public List<HotelShortDto> getAllHotels() {
+        return hotelService.getAllHotels();
+    }
+
     @GetMapping("/search")
     public List<HotelShortDto> searchHotels(
             @RequestParam(required = false) String name,
@@ -33,7 +38,7 @@ public class HotelController {
             @RequestParam(required = false, defaultValue = "name") String sortBy,
             @RequestParam(required = false, defaultValue = "asc") String direction
     ) {
-        return hotelService.getAllHotels(name, brand, city, country, amenity, sortBy, direction);
+        return hotelService.searchHotels(name, brand, city, country, amenity, sortBy, direction);
     }
 
     @PostMapping("/hotels")
@@ -46,4 +51,9 @@ public class HotelController {
         return hotelService.getHotelById(id);
     }
 
+    @PostMapping("/hotels/{id}/amenities")
+    public void addAmenities(@PathVariable UUID id,
+                             @RequestBody List<String> amenities) {
+        hotelService.addAmenities(id, amenities);
+    }
 }

@@ -21,7 +21,14 @@ public class HotelService {
     private final HotelRepository hotelRepository;
     private final HotelMapper mapper;
 
-    public List<HotelShortDto> getAllHotels(String name, String brand, String city,
+    public List<HotelShortDto> getAllHotels(){
+        List<HotelEntity> hotelEntities = hotelRepository.findAll();
+        return hotelEntities.stream()
+                .map(mapper::toShortDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<HotelShortDto> searchHotels(String name, String brand, String city,
                                             String country, String amenity,
                                             String sortBy, String direction) {
 
@@ -52,7 +59,6 @@ public class HotelService {
                 .collect(Collectors.toList());
     }
 
-
     public HotelFullDto getHotelById(UUID id) {
         HotelEntity hotelEntity = hotelRepository.findById(id).orElseThrow();
         return mapper.toFullDto(hotelEntity);
@@ -60,6 +66,12 @@ public class HotelService {
 
     public void createHotel(CreateHotelRequest request) {
         HotelEntity hotelEntity = mapper.toEntity(request);
+        hotelRepository.save(hotelEntity);
+    }
+
+    public void addAmenities(UUID id, List<String> amenities){
+        HotelEntity hotelEntity = hotelRepository.findById(id).orElseThrow();
+        hotelEntity.getAmenities().addAll(amenities);
         hotelRepository.save(hotelEntity);
     }
 }
