@@ -56,8 +56,8 @@ public class HotelController {
     }
 
     @PostMapping("/hotels")
-    public void createHotel(@RequestBody @Valid CreateHotelRequest request) {
-        hotelService.createHotel(request);
+    public HotelShortDto createHotel(@RequestBody @Valid CreateHotelRequest request) {
+        return hotelService.createHotel(request);
     }
 
     @PostMapping("/hotels/{id}/amenities")

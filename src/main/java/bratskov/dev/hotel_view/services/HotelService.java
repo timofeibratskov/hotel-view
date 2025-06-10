@@ -77,9 +77,10 @@ public class HotelService {
         return mapper.toFullDto(hotelEntity);
     }
 
-    public void createHotel(CreateHotelRequest request) {
+    public HotelShortDto createHotel(CreateHotelRequest request) {
         HotelEntity hotelEntity = mapper.toEntity(request);
         hotelRepository.save(hotelEntity);
+        return mapper.toShortDto(hotelEntity);
     }
 
     public void addAmenities(UUID id, List<String> amenities) {

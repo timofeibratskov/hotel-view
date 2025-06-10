@@ -5,6 +5,7 @@ import bratskov.dev.hotel_view.dtos.HotelFullDto;
 import bratskov.dev.hotel_view.dtos.HotelShortDto;
 import bratskov.dev.hotel_view.entities.HotelEntity;
 import bratskov.dev.hotel_view.dtos.CreateHotelRequest;
+import bratskov.dev.hotel_view.entities.embeddeds.Address;
 
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class HotelMapper {
                 .id(entity.getId())
                 .name(entity.getName())
                 .description(entity.getDescription())
-                .address(entity.getAddress())
+                .address(formatAddress(entity.getAddress()))
                 .phone(entity.getContacts().getPhone())
                 .build();
     }
@@ -45,4 +46,14 @@ public class HotelMapper {
                 .build();
     }
 
+    private String formatAddress(Address address) {
+        return String.format(
+                "%d %s, %s, %s, %s",
+                address.getHouseNumber(),
+                address.getStreet(),
+                address.getCity(),
+                address.getPostCode(),
+                address.getCountry()
+        );
+    }
 }
