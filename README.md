@@ -42,4 +42,5 @@ mvn spring-boot:run
 
 ```powershell
 Remove-Item -Path Env:spring.profiles.active
+mvn spring-boot:run
 ```
