@@ -11,7 +11,7 @@
 1. **Склонировать репозиторий:**
 
    ```bash
-   git clone https://github.com/timofeibratskov/hotel-view.git
+   [git clone https://github.com/timofeibratskov/hotel-view.git](https://github.com/timofeibratskov/hotel-view.git)
    cd hotel-view
    ```
 2. **Запустить приложение:**
