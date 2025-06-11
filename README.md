@@ -18,7 +18,28 @@
       ```bash
    mvn spring-boot:run
    ```
+      
    ---
    
 ## 🔗 Swagger-документация     
-****http://localhost:8092/property-view/swagger-ui.html****
+****http://localhost:8092/swagger-ui.html****
+
+---
+
+## 🧩 Переключение между базами данных (H2 ↔ PostgreSQL)
+
+По умолчанию приложение использует **встроенную H2-базу данных**.  
+Если вы хотите использовать **PostgreSQL**, предусмотрена поддержка Spring-профилей.
+
+**Активировать профиль PostgreSQL:**
+
+```powershell
+[System.Environment]::SetEnvironmentVariable("spring.profiles.active", "postgres", "Process")
+mvn spring-boot:run
+```
+
+**вернуться на H2:**
+
+```powershell
+Remove-Item -Path Env:spring.profiles.active
+```
