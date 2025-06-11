@@ -22,7 +22,7 @@
    ---
    
 ## 🔗 Swagger-документация     
-****[http://localhost:8092/swagger-ui.html](http://localhost:8092/swagger-ui/index.html)****
+****[http://localhost:8092/swagger-ui/index.html](http://localhost:8092/swagger-ui/index.html)****
 
 ---
 
