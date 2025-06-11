@@ -11,8 +11,9 @@ import bratskov.dev.hotel_view.dtos.HotelShortDto;
 import bratskov.dev.hotel_view.enums.HistogramParam;
 import bratskov.dev.hotel_view.services.HotelService;
 import bratskov.dev.hotel_view.dtos.CreateHotelRequest;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import bratskov.dev.hotel_view.dtos.HotelSearchCriteriaDTO;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,11 +40,10 @@ public class HotelController {
             @RequestParam(required = false) String brand,
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String country,
-            @RequestParam(required = false) String amenity,
-            @RequestParam(required = false, defaultValue = "name") String sortBy,
-            @RequestParam(required = false, defaultValue = "asc") String direction
+            @RequestParam(required = false) List<String> amenities
     ) {
-        return hotelService.searchHotels(name, brand, city, country, amenity, sortBy, direction);
+        HotelSearchCriteriaDTO dto = new HotelSearchCriteriaDTO(name, brand, city, country, amenities);
+        return hotelService.searchHotels(dto);
     }
 
     @GetMapping("/hotels/{id}")

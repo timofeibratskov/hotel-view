@@ -1,7 +1,10 @@
 package bratskov.dev.hotel_view.services;
 
+import jakarta.persistence.criteria.Predicate;
 import bratskov.dev.hotel_view.entities.HotelEntity;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.List;
 
 public class HotelSpecifications {
     public static Specification<HotelEntity> hasName(String name) {
@@ -24,8 +27,15 @@ public class HotelSpecifications {
                 country == null ? null : cb.equal(cb.lower(root.get("address").get("country")), country.toLowerCase());
     }
 
-    public static Specification<HotelEntity> hasAmenity(String amenity) {
-        return (root, query, cb) ->
-                amenity == null ? null : cb.isMember(amenity, root.get("amenities"));
+    public static Specification<HotelEntity> hasAmenity(List<String> amenities) {
+        return (root, query, cb) -> {
+            if (amenities == null || amenities.isEmpty()) {
+                return null;
+            }
+            Predicate[] predicates = amenities.stream()
+                    .map(amenity -> cb.isMember(amenity, root.get("amenities")))
+                    .toArray(Predicate[]::new);
+            return cb.or(predicates);
+        };
     }
 }

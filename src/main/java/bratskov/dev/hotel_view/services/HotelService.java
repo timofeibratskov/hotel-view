@@ -4,7 +4,6 @@ import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.Root;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.criteria.Expression;
 import bratskov.dev.hotel_view.dtos.HotelFullDto;
@@ -16,6 +15,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import bratskov.dev.hotel_view.entities.HotelEntity;
 import bratskov.dev.hotel_view.dtos.CreateHotelRequest;
 import org.springframework.data.jpa.domain.Specification;
+import bratskov.dev.hotel_view.dtos.HotelSearchCriteriaDTO;
 import bratskov.dev.hotel_view.repositories.HotelRepository;
 import org.springframework.transaction.annotation.Transactional;
 import bratskov.dev.hotel_view.exceptions.HotelNotFoundException;
@@ -40,32 +40,27 @@ public class HotelService {
     }
 
     public List<HotelShortDto> searchHotels(
-            String name, String brand, String city,
-            String country, String amenity,
-            String sortBy, String direction) {
+            HotelSearchCriteriaDTO searchCriteria) {
 
         Specification<HotelEntity> spec = (root, query, cb) -> cb.conjunction();
 
-        if (name != null) {
-            spec = spec.and(HotelSpecifications.hasName(name));
+        if (searchCriteria.name() != null && !searchCriteria.name().isEmpty()) {
+            spec = spec.and(HotelSpecifications.hasName(searchCriteria.name()));
         }
-        if (brand != null) {
-            spec = spec.and(HotelSpecifications.hasBrand(brand));
+        if (searchCriteria.brand() != null && !searchCriteria.brand().isEmpty()) {
+            spec = spec.and(HotelSpecifications.hasBrand(searchCriteria.brand()));
         }
-        if (city != null) {
-            spec = spec.and(HotelSpecifications.hasCity(city));
+        if (searchCriteria.city() != null && !searchCriteria.city().isEmpty()) {
+            spec = spec.and(HotelSpecifications.hasCity(searchCriteria.city()));
         }
-        if (country != null) {
-            spec = spec.and(HotelSpecifications.hasCountry(country));
+        if (searchCriteria.country() != null && !searchCriteria.country().isEmpty()) {
+            spec = spec.and(HotelSpecifications.hasCountry(searchCriteria.country()));
         }
-        if (amenity != null) {
-            spec = spec.and(HotelSpecifications.hasAmenity(amenity));
+        if (searchCriteria.amenities() != null && !searchCriteria.amenities().isEmpty()) {
+            spec = spec.and(HotelSpecifications.hasAmenity(searchCriteria.amenities()));
         }
 
-        Sort.Direction dir = Sort.Direction.fromString(direction == null ? "asc" : direction);
-        String sortField = sortBy == null ? "name" : sortBy;
-        Sort sort = Sort.by(dir, sortField);
-        List<HotelEntity> hotelEntities = hotelRepository.findAll(spec, sort);
+        List<HotelEntity> hotelEntities = hotelRepository.findAll(spec);
         return hotelEntities.stream()
                 .map(mapper::toShortDto)
                 .collect(Collectors.toList());
@@ -86,12 +81,13 @@ public class HotelService {
         return mapper.toShortDto(hotelEntity);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void addAmenities(UUID id, List<String> amenities) {
         HotelEntity hotelEntity = hotelRepository.findById(id)
                 .orElseThrow(() ->
                         new HotelNotFoundException("Hotel not found with id: " + id));
         hotelEntity.getAmenities().addAll(amenities);
+        System.out.println("ДОБАВИЛ УДОБСТВА!!! " + amenities.toString());
         hotelRepository.save(hotelEntity);
     }
 
