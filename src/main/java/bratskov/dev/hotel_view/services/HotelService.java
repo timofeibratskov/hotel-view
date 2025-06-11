@@ -91,6 +91,9 @@ public class HotelService {
 
     @Transactional(readOnly = true)
     public Map<String, Long> getHistogram(HistogramParam param) {
+        if (param == null) {
+            throw new IllegalArgumentException("Unsupported histogram param: null");
+        }
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
         Root<HotelEntity> hotelEntityRoot = cq.from(HotelEntity.class);

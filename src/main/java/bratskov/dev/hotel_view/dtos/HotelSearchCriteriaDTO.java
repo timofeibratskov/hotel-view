@@ -1,9 +1,10 @@
 package bratskov.dev.hotel_view.dtos;
 
+import lombok.Builder;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
-
+@Builder
 public record HotelSearchCriteriaDTO(
         @Schema(description = "Hotel name filter", example = "Hilton")
         String name,
