@@ -6,11 +6,10 @@ import bratskov.dev.hotel_view.entities.embeddeds.ArrivalTime;
 import lombok.Builder;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Builder
 public record HotelFullDto(
-        UUID id,
+        Long id,
         String name,
         String description,
         String brand,

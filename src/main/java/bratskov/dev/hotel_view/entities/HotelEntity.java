@@ -1,18 +1,20 @@
 package bratskov.dev.hotel_view.entities;
 
-import lombok.Getter;
 import lombok.Setter;
+import lombok.Getter;
 import lombok.Builder;
 import lombok.ToString;
 import jakarta.persistence.Id;
 import lombok.NoArgsConstructor;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
 import bratskov.dev.hotel_view.entities.embeddeds.Address;
@@ -20,7 +22,6 @@ import bratskov.dev.hotel_view.entities.embeddeds.Contacts;
 import bratskov.dev.hotel_view.entities.embeddeds.ArrivalTime;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "hotels")
@@ -32,7 +33,8 @@ import java.util.UUID;
 @ToString
 public class HotelEntity {
     @Id
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String name;
 

@@ -22,7 +22,6 @@ import bratskov.dev.hotel_view.exceptions.HotelNotFoundException;
 
 import java.util.Map;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -67,7 +66,7 @@ public class HotelService {
     }
 
     @Transactional(readOnly = true)
-    public HotelFullDto getHotelById(UUID id) {
+    public HotelFullDto getHotelById(Long id) {
         HotelEntity hotelEntity = hotelRepository.findById(id)
                 .orElseThrow(() ->
                         new HotelNotFoundException("Hotel not found with id: " + id));
@@ -82,12 +81,11 @@ public class HotelService {
     }
 
     @Transactional
-    public void addAmenities(UUID id, List<String> amenities) {
+    public void addAmenities(Long id, List<String> amenities) {
         HotelEntity hotelEntity = hotelRepository.findById(id)
                 .orElseThrow(() ->
                         new HotelNotFoundException("Hotel not found with id: " + id));
         hotelEntity.getAmenities().addAll(amenities);
-        System.out.println("ДОБАВИЛ УДОБСТВА!!! " + amenities.toString());
         hotelRepository.save(hotelEntity);
     }
 

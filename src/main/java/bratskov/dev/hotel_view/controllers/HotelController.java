@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Validated
 @RequiredArgsConstructor
@@ -47,7 +46,7 @@ public class HotelController {
     }
 
     @GetMapping("/hotels/{id}")
-    public HotelFullDto getHotel(@PathVariable UUID id) {
+    public HotelFullDto getHotel(@PathVariable Long id) {
         return hotelService.getHotelById(id);
     }
 
@@ -65,7 +64,7 @@ public class HotelController {
     }
 
     @PostMapping("/hotels/{id}/amenities")
-    public ResponseEntity<Void> addAmenities(@PathVariable @NotNull UUID id,
+    public ResponseEntity<Void> addAmenities(@PathVariable @NotNull Long id,
                                              @RequestBody @Valid @NotNull @NotEmpty(message = "Amenities list must not be empty")
                                              List<@NotBlank String> amenities) {
         hotelService.addAmenities(id, amenities);

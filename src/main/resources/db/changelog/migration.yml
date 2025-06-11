@@ -8,7 +8,8 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: UUID
+                  type: BIGINT
+                  autoIncrement: true
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -26,13 +27,6 @@ databaseChangeLog:
               - column:
                   name: phone
                   type: VARCHAR(50)
-  - changeSet:
-      id: 2
-      author: timofei
-      changes:
-        - addColumn:
-            tableName: hotels
-            columns:
               - column:
                   name: street
                   type: VARCHAR(255)
@@ -48,34 +42,17 @@ databaseChangeLog:
               - column:
                   name: post_code
                   type: VARCHAR(20)
-
-  - changeSet:
-      id: 3
-      author: timofei
-      changes:
-        - addColumn:
-            tableName: hotels
-            columns:
               - column:
                   name: email
                   type: VARCHAR(100)
-
-  - changeSet:
-      id: 4
-      author: timofei
-      changes:
-        - addColumn:
-            tableName: hotels
-            columns:
               - column:
                   name: check_in
                   type: VARCHAR(10)
               - column:
                   name: check_out
                   type: VARCHAR(10)
-
   - changeSet:
-      id: 5
+      id: 2
       author: timofei
       changes:
         - createTable:
@@ -83,7 +60,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: hotel_id
-                  type: UUID
+                  type: BIGINT
                   constraints:
                     nullable: false
               - column:

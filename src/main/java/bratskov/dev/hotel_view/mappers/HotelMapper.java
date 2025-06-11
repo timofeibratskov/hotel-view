@@ -7,13 +7,11 @@ import bratskov.dev.hotel_view.entities.HotelEntity;
 import bratskov.dev.hotel_view.dtos.CreateHotelRequest;
 import bratskov.dev.hotel_view.entities.embeddeds.Address;
 
-import java.util.UUID;
 
 @Component
 public class HotelMapper {
     public HotelEntity toEntity(CreateHotelRequest request) {
         return HotelEntity.builder()
-                .id(UUID.randomUUID())
                 .name(request.name())
                 .description(request.description())
                 .address(request.address())

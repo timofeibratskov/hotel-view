@@ -6,9 +6,8 @@ import bratskov.dev.hotel_view.entities.HotelEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import java.util.UUID;
 
 @Repository
-public interface HotelRepository extends JpaRepository<HotelEntity, UUID>,
+public interface HotelRepository extends JpaRepository<HotelEntity, Long>,
         JpaSpecificationExecutor<HotelEntity> {
 }
