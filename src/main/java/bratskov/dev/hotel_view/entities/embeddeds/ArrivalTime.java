@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 
 @Embeddable
@@ -20,6 +21,8 @@ import jakarta.validation.constraints.NotBlank;
 @ToString
 public class ArrivalTime {
     @NotBlank(message = "Check-in time must not be blank")
-    private String checkIn;
-    private String checkOut;
+    @Schema(description = "Check-in time", example = "14:00")
+    String checkIn;
+    @Schema(description = "Check-out time", example = "12:00")
+    String checkOut;
 }

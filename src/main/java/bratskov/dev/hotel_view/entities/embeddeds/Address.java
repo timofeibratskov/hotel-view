@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Embeddable
 @Getter
@@ -19,13 +20,18 @@ import jakarta.validation.constraints.NotBlank;
 @ToString
 public class Address {
     @NotBlank(message = "Street must not be blank")
-    private String street;
+    @Schema(description = "Street name", example = "Pobediteley Avenue")
+    String street;
     @NotNull(message = "House number must not be null")
-    private Integer houseNumber;
+    @Schema(description = "House number", example = "9")
+    Integer houseNumber;
     @NotBlank(message = "City must not be blank")
-    private String city;
+    @Schema(description = "City name", example = "Minsk")
+    String city;
     @NotBlank(message = "Country must not be blank")
-    private String country;
+    @Schema(description = "Country name", example = "Belarus")
+    String country;
     @NotBlank(message = "Post code must not be blank")
-    private String postCode;
+    @Schema(description = "Postal code", example = "220004")
+    String postCode;
 }
