@@ -1,5 +1,23 @@
-spring:
-  liquibase:
-    change-log: db/changelog/migration.yml
 server:
   port: 8092
+
+spring:
+  application:
+    name: hotel-view-api
+  datasource:
+    url: jdbc:h2:mem:hotels
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  liquibase:
+    changelog: classpath:db/changelog/migration.yml
