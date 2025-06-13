@@ -3,6 +3,7 @@ package bratskov.dev.hotel_view.services;
 import jakarta.persistence.criteria.Predicate;
 import bratskov.dev.hotel_view.entities.HotelEntity;
 import org.springframework.data.jpa.domain.Specification;
+import bratskov.dev.hotel_view.entities.embeddeds.Address;
 
 import java.util.List;
 
@@ -37,5 +38,15 @@ public class HotelSpecifications {
                     .toArray(Predicate[]::new);
             return cb.or(predicates);
         };
+    }
+    public static Specification<HotelEntity> isUniqueHotel(String name, Address address) {
+        return (root, query, cb) -> cb.and(
+                cb.equal(root.get("name"), name),
+                cb.equal(root.get("address").get("street"), address.getStreet()),
+                cb.equal(root.get("address").get("houseNumber"), address.getHouseNumber()),
+                cb.equal(root.get("address").get("city"), address.getCity()),
+                cb.equal(root.get("address").get("country"), address.getCountry()),
+                cb.equal(root.get("address").get("postCode"), address.getPostCode())
+        );
     }
 }

@@ -22,6 +22,7 @@ import bratskov.dev.hotel_view.exceptions.HotelNotFoundException;
 
 import java.util.Map;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,6 +76,12 @@ public class HotelService {
 
     @Transactional
     public HotelShortDto createHotel(CreateHotelRequest request) {
+        Optional<HotelEntity> existingHotel = hotelRepository.findOne(
+                HotelSpecifications.isUniqueHotel(request.name(), request.address())
+        );
+        if (existingHotel.isPresent()) {
+            throw new IllegalArgumentException("Hotel with name '" + request.name() + "' and address already exists");
+        }
         HotelEntity hotelEntity = mapper.toEntity(request);
         hotelRepository.save(hotelEntity);
         return mapper.toShortDto(hotelEntity);
