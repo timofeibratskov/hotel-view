@@ -23,6 +23,7 @@ import bratskov.dev.hotel_view.exceptions.HotelNotFoundException;
 import java.util.Map;
 import java.util.List;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -134,7 +135,9 @@ public class HotelService {
                 .stream()
                 .collect(Collectors.toMap(
                         tuple -> tuple.get(0, String.class),
-                        tuple -> tuple.get(1, Long.class)
+                        tuple -> tuple.get(1, Long.class),
+                        (a, b) -> a,
+                        TreeMap::new
                 ));
     }
 }

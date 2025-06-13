@@ -36,7 +36,7 @@ public class HotelSpecifications {
             Predicate[] predicates = amenities.stream()
                     .map(amenity -> cb.isMember(amenity, root.get("amenities")))
                     .toArray(Predicate[]::new);
-            return cb.or(predicates);
+            return cb.and(predicates);
         };
     }
     public static Specification<HotelEntity> isUniqueHotel(String name, Address address) {
