@@ -1,11 +1,14 @@
 package bratskov.dev.hotel_view.services;
 
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import bratskov.dev.hotel_view.entities.HotelEntity;
 import org.springframework.data.jpa.domain.Specification;
 import bratskov.dev.hotel_view.entities.embeddeds.Address;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class HotelSpecifications {
     public static Specification<HotelEntity> hasName(String name) {
@@ -31,12 +34,16 @@ public class HotelSpecifications {
     public static Specification<HotelEntity> hasAmenity(List<String> amenities) {
         return (root, query, cb) -> {
             if (amenities == null || amenities.isEmpty()) {
-                return null;
+                return cb.conjunction();
             }
-            Predicate[] predicates = amenities.stream()
-                    .map(amenity -> cb.isMember(amenity, root.get("amenities")))
-                    .toArray(Predicate[]::new);
-            return cb.and(predicates);
+            List<Predicate> predicates = amenities.stream()
+                    .filter(Objects::nonNull)
+                    .map(amenity -> {
+                        Join<HotelEntity, String> amenityJoin = root.join("amenities");
+                        return cb.equal(cb.lower(amenityJoin), cb.lower(cb.literal(amenity)));
+                    })
+                    .collect(Collectors.toList());
+            return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
     public static Specification<HotelEntity> isUniqueHotel(String name, Address address) {
