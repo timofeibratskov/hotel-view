@@ -20,8 +20,12 @@ import bratskov.dev.hotel_view.repositories.HotelRepository;
 import org.springframework.transaction.annotation.Transactional;
 import bratskov.dev.hotel_view.exceptions.HotelNotFoundException;
 
+import java.util.Set;
 import java.util.Map;
 import java.util.List;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,6 +79,12 @@ public class HotelService {
 
     @Transactional
     public HotelShortDto createHotel(CreateHotelRequest request) {
+        Optional<HotelEntity> existingHotel = hotelRepository.findOne(
+                HotelSpecifications.isUniqueHotel(request.name(), request.address())
+        );
+        if (existingHotel.isPresent()) {
+            throw new IllegalArgumentException("Hotel with name '" + request.name() + "' and address already exists");
+        }
         HotelEntity hotelEntity = mapper.toEntity(request);
         hotelRepository.save(hotelEntity);
         return mapper.toShortDto(hotelEntity);
@@ -83,9 +93,23 @@ public class HotelService {
     @Transactional
     public void addAmenities(Long id, List<String> amenities) {
         HotelEntity hotelEntity = hotelRepository.findById(id)
-                .orElseThrow(() ->
-                        new HotelNotFoundException("Hotel not found with id: " + id));
-        hotelEntity.getAmenities().addAll(amenities);
+                .orElseThrow(() -> new HotelNotFoundException("Hotel not found with id: " + id));
+        Set<String> existingAmenities = hotelEntity.getAmenities();
+        Set<String> existingAmenitiesLower = existingAmenities.stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
+        List<String> duplicates = amenities.stream()
+                .filter(Objects::nonNull)
+                .filter(a -> existingAmenitiesLower.contains(a.toLowerCase()))
+                .collect(Collectors.toList());
+        if (!duplicates.isEmpty()) {
+            throw new IllegalArgumentException(String.format("Amenities %s already exist for this hotel. Please provide a request without them.", duplicates));
+        }
+        Set<String> newAmenities = amenities.stream()
+                .filter(Objects::nonNull)
+                .filter(a -> !existingAmenities.contains(a))
+                .collect(Collectors.toSet());
+        existingAmenities.addAll(newAmenities);
         hotelRepository.save(hotelEntity);
     }
 
@@ -114,10 +138,10 @@ public class HotelService {
                 break;
             case AMENITIES:
                 groupByField = hotelEntityRoot.join("amenities");
+                cq.where(cb.isNotNull(groupByField));
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported histogram param: " + param);
-
         }
 
         cq.multiselect(groupByField, cb.count(hotelEntityRoot)).groupBy(groupByField);
@@ -127,7 +151,9 @@ public class HotelService {
                 .stream()
                 .collect(Collectors.toMap(
                         tuple -> tuple.get(0, String.class),
-                        tuple -> tuple.get(1, Long.class)
+                        tuple -> tuple.get(1, Long.class),
+                        (a, b) -> a,
+                        TreeMap::new
                 ));
     }
 }
